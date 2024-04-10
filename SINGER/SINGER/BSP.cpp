@@ -16,6 +16,7 @@ BSP::~BSP() {
 
 void BSP::reserve_memory(int length) {
     forward_probs.reserve(length);
+    // forward_probs.resize(length);
 }
 
 void BSP::start(set<Branch> &branches, double t) {

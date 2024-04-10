@@ -68,6 +68,8 @@ public:
     
     void load_vcf(string prefix, double start, double end);
     
+    void load_haps(string prefix, double start, double end);
+    
     void optimal_ordering();
     
     Node_ptr build_node(int index, double time);

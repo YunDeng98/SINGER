@@ -17,7 +17,8 @@ approx_BSP::~approx_BSP() {
 }
 
 void approx_BSP::reserve_memory(int length) {
-    forward_probs.reserve(length);
+    // forward_probs.reserve(length);
+    forward_probs.resize(length);
 }
 
 void approx_BSP::start(set<Branch> &branches, double t) {
@@ -46,7 +47,8 @@ void approx_BSP::start(set<Branch> &branches, double t) {
         }
     }
     cutoff = min(0.01, cutoff/curr_intervals.size()); // adjust cutoff based on number of states;
-    forward_probs.push_back(temp);
+    // forward_probs.push_back(temp);
+    forward_probs[curr_index] = temp;
     weight_sums.push_back(0.0);
     set_dimensions();
     compute_interval_info();
@@ -80,7 +82,8 @@ void approx_BSP::start(Tree &tree, double t) {
         }
     }
     cutoff = min(0.01, cutoff/curr_intervals.size()); // adjust cutoff based on number of states;
-    forward_probs.push_back(temp);
+    // forward_probs.push_back(temp);
+    forward_probs[curr_index] = temp;
     weight_sums.push_back(0.0);
     set_dimensions();
     compute_interval_info();
@@ -107,7 +110,8 @@ void approx_BSP::forward(double rho) {
     prev_rho = rho;
     curr_index += 1;
     recomb_sum = inner_product(recomb_probs.begin(), recomb_probs.end(), forward_probs[curr_index - 1].begin(), 0.0);
-    forward_probs.push_back(recomb_probs);
+    // forward_probs.push_back(recomb_probs);
+    forward_probs[curr_index] = recomb_probs;
     for (int i = 0; i < dim; i++) {
         forward_probs[curr_index][i] = forward_probs[curr_index - 1][i]*(1 - recomb_probs[i]) + recomb_sum*recomb_weights[i];
     }
@@ -392,7 +396,8 @@ void approx_BSP::generate_intervals(Recombination &r) {
             }
         }
     }
-    forward_probs.push_back(temp);
+    // forward_probs.push_back(temp);
+    forward_probs[curr_index] = temp;
     curr_intervals = move(temp_intervals);
 }
 

@@ -52,8 +52,12 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-Ne 1e4 -m 2e-8 -r 2e-8 -input  /Users/yun_deng/Desktop/SINGER/arg_files/50_0 -output  /Users/yun_deng/Desktop/SINGER/arg_files/50_0 -polar 0.99 -start 0 -end 1e6 -n 0 -thin 1"
+            argument = "-Ne 1e4 -m 2e-8 -r 2e-8 -input  /Users/yun_deng/Desktop/SINGER/arg_files/50_0 -output  /Users/yun_deng/Desktop/SINGER/arg_files/50_0 -polar 0.99 -start 0 -end 1e6 -n 50 -thin 10"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-Ne 1e4 -m 2e-8 -r 2e-8 -haps /Users/yun_deng/Desktop/SINGER/arg_files/test -output  /Users/yun_deng/Desktop/SINGER/arg_files/test -polar 0.99 -start 0 -end 1e6 -n 50 -thin 10"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-Ne 1e4 -m 1e-8 -r 1e-8 -input /Users/yun_deng/Desktop/POLEGON/arg_files/migration -output /Users/yun_deng/Desktop/POLEGON/arg_files/migration -start 0 -end 2e6 -n 0 -thin 1 -polar 0.99"
@@ -69,10 +73,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-Ne 1e4 -m 1.2e-8 -r 1.2e-8 -input  /Users/yun_deng/Desktop/SINGER/arg_files/ceu_ts_0 -output  /Users/yun_deng/Desktop/SINGER/arg_files/ceu_ts_0 -polar 0.99 -start 9000000 -end 10000000 -n 100 -thin 20"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-Ne 2.5e5 -m 1.8e-8  -r 9e-8 -input /Users/yun_deng/Desktop/SINGER/arg_files/region101 -output /Users/yun_deng/Desktop/SINGER/arg_files/region101 -n 100 -thin 10 -start 51883700 -end 52880300 -penalty 0.001"
+            argument = "-Ne 2.5e5 -m 1.8e-8  -r 7.2e-8 -input /Users/yun_deng/Desktop/SINGER/arg_files/region323 -output /Users/yun_deng/Desktop/SINGER/arg_files/region323 -n 100 -thin 10 -start 19878000 -end 20869600"
             isEnabled = "NO">
          </CommandLineArgument>
       </CommandLineArguments>

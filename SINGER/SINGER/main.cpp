@@ -12,6 +12,7 @@ int main(int argc, const char * argv[]) {
     bool fast = false;
     bool resume = false;
     bool debug = false;
+    bool haps_mode = false;
     double r = -1, m = -1, Ne = -1;
     int num_iters = 0;
     int spacing = 1;
@@ -161,6 +162,14 @@ int main(int argc, const char * argv[]) {
             }
             input_filename = argv[++i];
         }
+        else if (arg == "-haps") {
+            if (i + 1 > argc || argv[i+1][0] == '-') {
+                cerr << "Error: -haps flag cannot be empty. " << endl;
+                exit(1);
+            }
+            input_filename = argv[++i];
+            haps_mode = true;
+        }
         else if (arg == "-output") {
             if (i + 1 > argc || argv[i+1][0] == '-') {
                 cerr << "Error: -output flag cannot be empty. " << endl;
@@ -264,7 +273,11 @@ int main(int argc, const char * argv[]) {
         }
         return 0;
     }
-    sampler.load_vcf(input_filename, start_pos, end_pos);
+    if (haps_mode) {
+        sampler.load_haps(input_filename, start_pos, end_pos);
+    } else {
+        sampler.load_vcf(input_filename, start_pos, end_pos);
+    }
     if (fast) {
         sampler.fast_iterative_start();
     } else {

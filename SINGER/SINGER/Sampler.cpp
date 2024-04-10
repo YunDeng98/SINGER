@@ -249,6 +249,66 @@ void Sampler::load_vcf(string prefix, double start, double end) {
     }
 }
 
+void Sampler::load_haps(string prefix, double start, double end) {
+    string haps_file = prefix + ".haps";
+    ifstream file(haps_file);
+    if (!file.is_open()) {
+        cerr << "Failed to open file: " << haps_file << endl;
+        return;
+    }
+    string line;
+    int valid_mutation = 0;
+    int removed_mutation = 0;
+    vector<Node_ptr> nodes = {};
+
+    while (getline(file, line)) {
+        istringstream iss(line);
+        string chrom, id, ref, alt, pos_str;
+        double pos;
+        iss >> chrom >> id >> pos_str >> ref >> alt;
+
+        pos = stod(pos_str.substr(pos_str.find(':') + 1));
+
+        if (pos < start || pos > end) {
+            continue; // Skip variants outside the desired range
+        }
+
+        vector<double> genotypes;
+        string genotype;
+        while (iss >> genotype) {
+            for (char& allele : genotype) {
+                genotypes.push_back(allele == '0' ? 0.0 : 1.0);
+            }
+        }
+        if (nodes.size() == 0) {
+            nodes.resize(genotypes.size());
+            for (int i = 0; i < nodes.size(); i++) {
+                nodes[i] = new_node(0.0);
+                nodes[i]->set_index(i);
+                sample_nodes.insert(nodes[i]);
+            }
+        } else {
+            assert(nodes.size() == genotypes.size());
+        }
+        int genotype_sum = accumulate(genotypes.begin(), genotypes.end(), 0);
+        if (genotype_sum >= 1 && genotype_sum < genotypes.size()) {
+            valid_mutation++;
+            for (int i = 0; i < genotypes.size(); i++) {
+                if (genotypes[i] == 1) {
+                    nodes[i]->add_mutation(pos - start);
+                }
+            }
+        } else {
+            removed_mutation++;
+        }
+    }
+    num_samples = (int)sample_nodes.size();
+    ordered_sample_nodes = vector<Node_ptr>(sample_nodes.begin(), sample_nodes.end());
+    sequence_length = end - start;
+    cout << "Valid mutations: " << valid_mutation << endl;
+    cout << "Removed mutations: " << removed_mutation << endl;
+}
+
 void Sampler::optimal_ordering() {
     ordered_sample_nodes.clear();
     set<Node_ptr, compare_node> covered_nodes = {};
