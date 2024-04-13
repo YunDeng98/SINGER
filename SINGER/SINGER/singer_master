@@ -135,6 +135,13 @@ def main():
         sys.exit(1)
 
     args = parser.parse_args()
+     
+    if not (args.vcf or args.haps):
+        parser.error("At least one of the arguments -vcf or -haps is required.")
+
+    if (args.haps):
+        run_haps_singer(args.Ne, args.m, args.ratio, args.start, args.end, args.haps, args.output, args.n, args.thin, args.polar, args.seed)
+        return
 
     if (args.resume):
         resume_singer(args.Ne, args.m, args.ratio, args.start, args.end, args.vcf, args.output, args.n, args.thin, args.polar, args.seed)
