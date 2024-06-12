@@ -18,6 +18,7 @@ int main(int argc, const char * argv[]) {
     int spacing = 1;
     double start_pos = -1, end_pos = -1;
     string input_filename = "", output_prefix = "";
+    string recomb_map_filename = "", mut_map_filename = "";
     double penalty = 0.01;
     double polar = 0.5;
     double epsilon_hmm = 0.1;
@@ -82,6 +83,20 @@ int main(int argc, const char * argv[]) {
                 cerr << "Error: -r flag expects a number. " << endl;
                 exit(1);
             }
+        }
+        else if (arg == "-recomb_map") {
+            if (i + 1 > argc || argv[i+1][0] == '-') {
+                cerr << "Error: -recomb_map flag cannot be empty. " << endl;
+                exit(1);
+            }
+            recomb_map_filename = argv[++i];
+        }
+        else if (arg == "-mut_map") {
+            if (i + 1 > argc || argv[i+1][0] == '-') {
+                cerr << "Error: -mut_map flag cannot be empty. " << endl;
+                exit(1);
+            }
+            mut_map_filename = argv[++i];
         }
         else if (arg == "-penalty") {
             if (i + 1 >= argc || argv[i+1][0] == '-') {
@@ -218,6 +233,7 @@ int main(int argc, const char * argv[]) {
             exit(1);
         }
     }
+    /*
     if (r < 0) {
         cerr << "-r flag missing or invalid value. " << endl;
         exit(1);
@@ -226,6 +242,7 @@ int main(int argc, const char * argv[]) {
         cerr << "-m flag missing or invalid value. " << endl;
         exit(1);
     }
+     */
     if (Ne < 0) {
         cerr << "-Ne flag missing or invalid value. " << endl;
         exit(1);
@@ -246,7 +263,11 @@ int main(int argc, const char * argv[]) {
         cerr << "-thin flag is invalid. " << endl;
         exit(1);
     }
-    Sampler sampler = Sampler(Ne, r, m);
+    Rate_map recomb_map = Rate_map();
+    recomb_map.load_map(recomb_map_filename);
+    Rate_map mut_map = Rate_map();
+    mut_map.load_map(mut_map_filename);
+    Sampler sampler = Sampler(Ne, recomb_map, mut_map);
     sampler.penalty = penalty;
     sampler.polar = polar;
     sampler.set_precision(epsilon_hmm, epsilon_psmc);
@@ -277,6 +298,10 @@ int main(int argc, const char * argv[]) {
         sampler.load_haps(input_filename, start_pos, end_pos);
     } else {
         sampler.load_vcf(input_filename, start_pos, end_pos);
+    }
+    if (sampler.num_valid_sites < 100) {
+        cout << "Number of mutations too few (<100), SINGER won't run for such regions" << endl;
+        return 0;
     }
     if (fast) {
         sampler.fast_iterative_start();

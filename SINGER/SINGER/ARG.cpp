@@ -61,6 +61,14 @@ void ARG::compute_rhos_thetas(double r, double m) {
     }
 }
 
+void ARG::compute_rhos_thetas(Rate_map &recomb_map, Rate_map &mut_map) {
+    int n = (int) coordinates.size() - 1;
+    for (int i = 0; i < n; i++) {
+        rhos.push_back(recomb_map.segment_distance(coordinates[i], coordinates[i+1])*Ne);
+        thetas.push_back(mut_map.segment_distance(coordinates[i], coordinates[i+1])*Ne);
+    }
+}
+
 void ARG::build_singleton_arg(Node_ptr n) {
     add_sample(n);
     Branch branch = Branch(n, root);
@@ -480,7 +488,6 @@ void ARG::read_coordinates(string filename) {
     while (fin >> x) {
         coordinates.push_back(x);
     }
-    // cout << "finished" << endl;
     bin_num = (int) coordinates.size() - 1;
     return;
 }

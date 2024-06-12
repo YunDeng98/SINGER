@@ -13,6 +13,13 @@ Sampler::Sampler(double pop_size, double r, double m) {
     recomb_rate = r*pop_size;
 }
 
+Sampler::Sampler(double pop_size, Rate_map &rm, Rate_map &mm) {
+    recomb_map = rm;
+    mut_map = mm;
+    mut_rate = mm.mean_rate()*pop_size;
+    recomb_rate = rm.mean_rate()*pop_size;
+}
+
 void Sampler::set_precision(double c, double q) {
     bsp_c = c;
     tsp_q = q;
@@ -123,12 +130,13 @@ void Sampler::naive_read_vcf(string prefix, double start_pos, double end_pos) {
             }
         }
     }
+    sequence_length = end_pos - start_pos;
     num_samples = (int) sample_nodes.size();
     ordered_sample_nodes = vector<Node_ptr>(sample_nodes.begin(), sample_nodes.end());
     shuffle(ordered_sample_nodes.begin(), ordered_sample_nodes.end(), random_engine);
-    sequence_length = end_pos - start_pos;
     cout << "valid mutations: " << valid_mutation << endl;
     cout << "removed mutations: " << removed_mutation << endl;
+    num_valid_sites = valid_mutation;
 }
 
 void Sampler::guide_read_vcf(string prefix, double start, double end) {
@@ -237,6 +245,7 @@ void Sampler::guide_read_vcf(string prefix, double start, double end) {
     sequence_length = end - start;
     cout << "valid mutations: " << valid_mutation << endl;
     cout << "removed mutations: " << removed_mutation << endl;
+    num_valid_sites = valid_mutation;
 }
 
 void Sampler::load_vcf(string prefix, double start, double end) {
@@ -307,6 +316,7 @@ void Sampler::load_haps(string prefix, double start, double end) {
     sequence_length = end - start;
     cout << "Valid mutations: " << valid_mutation << endl;
     cout << "Removed mutations: " << removed_mutation << endl;
+    num_valid_sites = valid_mutation;
 }
 
 void Sampler::optimal_ordering() {
@@ -356,14 +366,16 @@ void Sampler::build_singleton_arg() {
     arg = ARG(Ne, sequence_length);
     arg.discretize(bin_size);
     arg.build_singleton_arg(n);
-    arg.compute_rhos_thetas(recomb_rate, mut_rate);
+    // arg.compute_rhos_thetas(recomb_rate, mut_rate);
+    arg.compute_rhos_thetas(recomb_map, mut_map);
 }
 
 void Sampler::build_void_arg() {
     double bin_size = rho_unit/recomb_rate;
     arg = ARG(Ne, sequence_length);
     arg.discretize(bin_size);
-    arg.compute_rhos_thetas(recomb_rate, mut_rate);
+    // arg.compute_rhos_thetas(recomb_rate, mut_rate);
+    arg.compute_rhos_thetas(recomb_map, mut_map);
 }
 
 void Sampler::iterative_start() {
@@ -841,7 +853,8 @@ void Sampler::load_resume_arg() {
     }
     arg.read(node_file, branch_file, recomb_file, mut_file);
     arg.read_coordinates(coord_file);
-    arg.compute_rhos_thetas(recomb_rate, mut_rate);
+    // arg.compute_rhos_thetas(recomb_rate, mut_rate);
+    arg.compute_rhos_thetas(recomb_map, mut_map);
 }
 
 vector<string> Sampler::read_last_line(string filename) {

@@ -17,15 +17,18 @@
 #include "Emission.hpp"
 #include "Normalizer.hpp"
 #include "Scaler.hpp"
+#include "Rate_map.hpp"
 
 class Sampler {
     
 public:
     
     double rho_unit = 4e-3;
-    double Ne = 1;
+    double Ne = -1;
     double mut_rate = 0;
     double recomb_rate = 0;
+    Rate_map mut_map;
+    Rate_map recomb_map;
     string input_prefix = "";
     string output_prefix = "";
     string log_prefix = "";
@@ -46,7 +49,11 @@ public:
     unordered_map<double, set<Node_ptr>> carriers = {};
     unordered_map<Node_ptr, set<double>> mutation_sets = {};
     
+    int num_valid_sites = 0;
+    
     Sampler(double pop_size, double r, double m);
+    
+    Sampler(double pop_size, Rate_map &recomb_map, Rate_map &mut_map);
     
     void set_pop_size(double n);
     
